@@ -5,6 +5,7 @@ package com.creatorri.level;
 
 import com.creatorri.entity.Entity;
 import com.creatorri.entity.Submarine;
+import com.creatorri.entity.enemy.Shark;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -41,10 +42,13 @@ public class Level {
         }
 
         entities.add(new Submarine(this));
+        for (int i = 0; i < 20; i++) {
+            entities.add(new Shark(this));
+        }
     }
 
     public int getDataAt(int x, int y) {
-        if (y > HEIGHT) {
+        if (y > HEIGHT - 3) {
             return AIR;
         }
         if (y < 0) {
@@ -55,6 +59,9 @@ public class Level {
         }
         if ((x > WIDTH || x < 0) && y > HEIGHT - 3) {
             return AIR;
+        }
+        if ((x > WIDTH || x < 0) && y > 0) {
+            return ROCK;
         }
 
         return level[x + y * WIDTH];

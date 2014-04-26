@@ -4,6 +4,8 @@
 package com.creatorri;
 
 import com.creatorri.assets.LoadArt;
+import com.creatorri.input.KeyboardInput;
+import com.creatorri.input.MouseInput;
 import com.creatorri.level.Level;
 import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
@@ -21,14 +23,20 @@ import javax.swing.UnsupportedLookAndFeelException;
 public class LD29 extends JFrame implements Runnable {
 
     public static boolean running = true;
-    private static Level level;
+    public static final int SCALE = 64;
+    public static Level level;
     public Thread t;
     private static final LoadArt la = new LoadArt();
-    public static final BufferedImage WATER = la.createBufferedImage("Water.png", 64, 64),
-            ROCK = la.createBufferedImage("Rock.png", 64, 64),
-            SAND = la.createBufferedImage("Sand.png", 64, 64),
-            CORAL = la.createBufferedImage("Coral.png", 64, 64),
-            AIR = la.createBufferedImage("Air.png", 64, 64);
+    public static final BufferedImage WATER = la.createBufferedImage("Water.png", SCALE, SCALE),
+            ROCK = la.createBufferedImage("Rock.png", SCALE, SCALE),
+            SAND = la.createBufferedImage("Sand.png", SCALE, SCALE),
+            CORAL = la.createBufferedImage("Coral.png", SCALE, SCALE),
+            AIR = la.createBufferedImage("Air.png", SCALE, SCALE);
+
+    public static KeyboardInput ki;
+    public static MouseInput mi;
+    public static int fps;
+    public static int width, height;
 
     public LD29() {
         super("Submersible Warfare");
@@ -36,6 +44,11 @@ public class LD29 extends JFrame implements Runnable {
         setSize(800, 600);
         setLocationRelativeTo(null);
         setVisible(true);
+        setFocusable(true);
+        ki = new KeyboardInput();
+        addKeyListener(ki);
+        mi = new MouseInput();
+        addMouseListener(mi);
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | UnsupportedLookAndFeelException ex) {
@@ -52,11 +65,7 @@ public class LD29 extends JFrame implements Runnable {
     }
 
     public static void newLevel() {
-        level = new Level(100, 60);
-    }
-
-    public static Level getLevel() {
-        return level;
+        level = new Level(255, 60);
     }
 
     public void startGame() {
@@ -70,8 +79,6 @@ public class LD29 extends JFrame implements Runnable {
             return;
         }
 
-        this.setFocusable(true);
-
         BufferStrategy bs = this.getBufferStrategy();
 
         if (bs == null) {
@@ -79,24 +86,31 @@ public class LD29 extends JFrame implements Runnable {
             return;
         }
 
+        width = getWidth();
+        height = getHeight();
+
         Graphics g = bs.getDrawGraphics();
-        int offx = (level.entities.get(0).x / 2);
-        int offy = (level.entities.get(0).y / 2);
-        for (int x = -1; x < (getWidth() / 64) + 1; x++) {
-            for (int y = -1; y < (getHeight() / 64) + 1; y++) {
-                g.drawImage(WATER, x * 64, getHeight() - (y * 64), this);
+        int offx = width / (2 * SCALE) - (int) (level.entities.get(0).x + SCALE / 90);
+        int offy = height / (2 * SCALE) - (level.entities.get(0).y - 2);
+        for (int x = -1; x < (width + SCALE) / SCALE; x++) {
+            for (int y = -1; y < (height + SCALE) / SCALE; y++) {
+                g.drawImage(WATER, x * SCALE, height - y * SCALE, this);
                 if (level.getDataAt(x - offx, y - offy) == Level.WATER) {
-                    g.drawImage(WATER, x * 64, getHeight() - (y * 64), this);
+                    g.drawImage(WATER, x * SCALE, height - (y * SCALE), this);
                 } else if (level.getDataAt(x - offx, y - offy) == Level.ROCK) {
-                    g.drawImage(ROCK, x * 64, getHeight() - (y * 64), this);
+                    g.drawImage(ROCK, x * SCALE, height - y * SCALE, this);
                 } else if (level.getDataAt(x - offx, y - offy) == Level.CORAL) {
-                    g.drawImage(CORAL, x * 64, getHeight() - (y * 64), this);
+                    g.drawImage(CORAL, x * SCALE, height - y * SCALE, this);
                 } else if (level.getDataAt(x - offx, y - offy) == Level.SAND) {
-                    g.drawImage(SAND, x * 64, getHeight() - (y * 64), this);
+                    g.drawImage(SAND, x * SCALE, height - y * SCALE, this);
                 } else if (level.getDataAt(x - offx, y - offy) == Level.AIR) {
-                    g.drawImage(AIR, x * 64, getHeight() - (y * 64), this);
-                } else {
-                    g.drawImage(level.entities.get(level.getDataAt(x - offx, y - offy) - 4).img, x * 64, getHeight() - (y * 64), this);
+                    g.drawImage(AIR, x * SCALE, height - y * SCALE, this);
+                } else if (level.getDataAt(x - offx, y - offy) > 4) {
+                    if (level.getDataAt(x - offx, y - offy) - 4 >= level.entities.size() || level.getDataAt(x - offx, y - offy) - 4 < 0) {
+                        level.setDataAt(x - offx, y - offy, 0);
+                        continue;
+                    }
+                    g.drawImage(level.entities.get(level.getDataAt(x - offx, y - offy) - 4).img, x * SCALE, height - y * SCALE, this);
                 }
             }
         }
@@ -105,9 +119,14 @@ public class LD29 extends JFrame implements Runnable {
     }
 
     public void tick() {
-        level.entities.stream().forEach((e) -> {
-            e.tick();
-        });
+        try {
+            level.entities.stream().forEach((e) -> {
+                if (e != null) {
+                    e.tick();
+                }
+            });
+        } catch (Exception e) {
+        }
     }
 
     @Override
@@ -115,8 +134,35 @@ public class LD29 extends JFrame implements Runnable {
         if (level == null) {
             newLevel();
         }
+        int frames = 0;
+        double unprocessedSeconds = 0;
+        long previousTime = System.nanoTime();
+        double secondsPerTick = 1.0 / 12.0;
+        int tickCount = 0;
+        boolean ticked = true;
         while (running) {
+            long currentTime = System.nanoTime();
+            long passedTime = currentTime - previousTime;
+            previousTime = currentTime;
+            unprocessedSeconds += passedTime / 1000000000.0;
+            while (unprocessedSeconds > secondsPerTick) {
+                tick();
+                unprocessedSeconds -= secondsPerTick;
+                ticked = true;
+                tickCount++;
+                if (tickCount % 60 == 0) {
+                    fps = frames;
+                    previousTime += 1000;
+                    frames = 0;
+                }
+            }
+            if (ticked) {
+                render();
+                frames++;
+                ticked = false;
+            }
             render();
+            frames++;
         }
         System.gc();
     }

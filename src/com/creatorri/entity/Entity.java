@@ -3,10 +3,10 @@
  */
 package com.creatorri.entity;
 
+import com.creatorri.LD29;
 import com.creatorri.assets.LoadArt;
 import com.creatorri.level.Level;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -16,9 +16,9 @@ import java.util.Random;
 public abstract class Entity {
 
     public int x = 0, y = 0;
-    public final int ID;
-    public double xVel, yVel;
-    public double health;
+    public int ID;
+    public double health = 100;
+    public double mele = 10;
     public BufferedImage img;
     protected final LoadArt la = new LoadArt();
     protected final Level level;
@@ -35,17 +35,52 @@ public abstract class Entity {
             y = rand.nextInt(level.HEIGHT);
         }
         level.setDataAt(x, y, ID);
-        img = la.createBufferedImage("Submarine.png", 16, 16);
+        img = la.createBufferedImage("Submarine.png", LD29.SCALE, LD29.SCALE);
     }
 
     public void move(int dx, int dy) {
-        if (level.getDataAt(dx, dy) != 0) {
+        if (level.getDataAt(dx, dy) > 4) {
+            level.entities.get(level.getDataAt(x, y)).health -= mele;
+        }
+        if (level.getDataAt(dx + x, dy + y) != 0) {
             return;
         }
         level.setDataAt(x, y, 0);
         x += dx;
         y += dy;
         level.setDataAt(x, y, ID);
+        if (health <= 0) {
+            death();
+        }
+    }
+
+    public void moveTo(int x, int y) {
+        if (level.getDataAt(x, y) != 0) {
+            return;
+        }
+        level.setDataAt(this.x, this.y, 0);
+        this.x = x;
+        this.y = y;
+        level.setDataAt(x, y, ID);
+    }
+
+    public double distTo(Entity e) {
+        return Math.sqrt(Math.pow(x - e.x, 2) + Math.pow(y - e.y, 2));
+    }
+
+    public void fire(double angle) {
+        level.entities.add(new Projectile(level, x + 1, y + 1, 2, angle));
+    }
+
+    public void death() {
+        level.entities.remove(this);
+        level.entities.stream().forEach((e) -> {
+            if (e.ID > ID) {
+                e.ID--;
+                level.setDataAt(e.x, e.y, e.ID);
+            }
+        });
+        level.setDataAt(x, y, 0);
     }
 
     public abstract void tick();
