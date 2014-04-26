@@ -4,6 +4,7 @@
 package com.creatorri.level;
 
 import com.creatorri.entity.Entity;
+import com.creatorri.entity.Submarine;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -14,9 +15,9 @@ import java.util.Random;
 public class Level {
 
     /**
-     * 0 is water 1 is rock 2 is sand 3 is coral 4 is air >3 entity ID
+     * 0 is water 1 is rock 2 is sand 3 is coral 4 is air >4 entity ID
      */
-    public int[] level;
+    private int[] level;
     public final int WIDTH, HEIGHT;
     public static final int WATER = 0, ROCK = 1, SAND = 2, CORAL = 3, AIR = 4;
     public ArrayList<Entity> entities = new ArrayList<>();
@@ -38,5 +39,28 @@ public class Level {
             level[xx + (height - 2) * width] = AIR;
             level[xx + (height - 3) * width] = AIR;
         }
+
+        entities.add(new Submarine(this));
+    }
+
+    public int getDataAt(int x, int y) {
+        if (y > HEIGHT) {
+            return AIR;
+        }
+        if (y < 0) {
+            return ROCK;
+        }
+        if ((x > WIDTH || x < 0) && y < HEIGHT - 3) {
+            return WATER;
+        }
+        if ((x > WIDTH || x < 0) && y > HEIGHT - 3) {
+            return AIR;
+        }
+
+        return level[x + y * WIDTH];
+    }
+
+    public void setDataAt(int x, int y, int data) {
+        level[x + y * WIDTH] = data;
     }
 }

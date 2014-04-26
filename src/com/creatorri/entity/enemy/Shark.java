@@ -14,6 +14,7 @@ public class Shark extends Entity {
 
     public Shark(Level o) {
         super(o);
+        img = la.createBufferedImage("Shark", 16, 16);
     }
 
     @Override

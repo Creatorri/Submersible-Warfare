@@ -3,7 +3,9 @@
  */
 package com.creatorri.entity;
 
+import com.creatorri.assets.LoadArt;
 import com.creatorri.level.Level;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -17,31 +19,34 @@ public abstract class Entity {
     public final int ID;
     public double xVel, yVel;
     public double health;
-    public double angle;
+    public BufferedImage img;
+    protected final LoadArt la = new LoadArt();
     protected final Level level;
-    protected final Random rand = new Random();
-    private ArrayList<Entity> instances = new ArrayList<>();
+    protected static final Random rand = new Random();
 
     public Entity(Level l) {
         level = l;
         level.entities.add(this);
-        ID = level.entities.size() - 1;
+        ID = level.entities.size() + 4;
         x = rand.nextInt(level.WIDTH);
         y = rand.nextInt(level.HEIGHT);
-        while (level.level[x + y * level.WIDTH] != 0) {
+        while (level.getDataAt(x, y) != 0) {
             x = rand.nextInt(level.WIDTH);
             y = rand.nextInt(level.HEIGHT);
         }
-        for(Entity e : instances){
-            if(e.getClass()==this.getClass()){
-                return;
-            }
+        level.setDataAt(x, y, ID);
+        img = la.createBufferedImage("Submarine.png", 16, 16);
+    }
+
+    public void move(int dx, int dy) {
+        if (level.getDataAt(dx, dy) != 0) {
+            return;
         }
-        instances.add(this);
+        level.setDataAt(x, y, 0);
+        x += dx;
+        y += dy;
+        level.setDataAt(x, y, ID);
     }
-    public void move(int dx,int dy){
-        if(level.level[dx+dy*level.WIDTH]!=0) return;
-        
-    }
+
     public abstract void tick();
 }
