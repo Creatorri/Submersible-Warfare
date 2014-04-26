@@ -1,0 +1,7 @@
+<#if licenseFirst??>
+${licenseFirst}
+</#if>
+${licensePrefix}All code and art written by Creatorri within the 48 hour time limit
+<#if licenseLast??>
+${licenseLast}
+</#if>
