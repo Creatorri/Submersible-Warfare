@@ -40,8 +40,25 @@ public class Projectile extends Entity {
             xVel = -(int) (Math.sin(Math.toRadians(angle)) * vel);
             yVel = (int) (Math.cos(Math.toRadians(angle)) * vel);
         }
-        moveTo(x, y);
+        if(xVel>0){
+            moveTo(x+1, y);
+        }
+        if(xVel<0){
+            moveTo(x-1, y);
+        }
+        if(yVel>0){
+            moveTo(x, y+1);
+        }
+        if(yVel<0){
+            moveTo(x, y-1);
+        }
         mele = 50;
+    }
+    
+    @Override
+    public void mele(Entity e){
+        super.mele(e);
+        death();
     }
 
     @Override

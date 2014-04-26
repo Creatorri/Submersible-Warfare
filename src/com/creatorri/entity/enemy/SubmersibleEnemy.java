@@ -18,6 +18,8 @@ public class SubmersibleEnemy extends Entity {
 
     @Override
     public void tick() {
-
+        if(health<=0){
+            death();
+        }
     }
 }

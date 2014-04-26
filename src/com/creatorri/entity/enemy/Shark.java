@@ -31,5 +31,8 @@ public class Shark extends Entity {
                 move(rand.nextInt() % 2, rand.nextInt() % 2);
             }
         }
+        if(health<=0){
+            death();
+        }
     }
 }

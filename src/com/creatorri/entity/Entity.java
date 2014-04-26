@@ -39,8 +39,12 @@ public abstract class Entity {
     }
 
     public void move(int dx, int dy) {
-        if (level.getDataAt(dx, dy) > 4) {
-            level.entities.get(level.getDataAt(x, y)).health -= mele;
+        for(int xx=x;xx<dx+x; xx += dx>0 ? 1 : -1){
+            for(int yy=y;yy<dy+y; yy += dy>0 ? 1 : -1){
+                if(level.getDataAt(xx, yy)>4){
+                    mele(level.entities.get(level.getDataAt(xx, yy)-4));
+                }
+            }
         }
         if (level.getDataAt(dx + x, dy + y) != 0) {
             return;
@@ -81,6 +85,10 @@ public abstract class Entity {
             }
         });
         level.setDataAt(x, y, 0);
+    }
+    
+    public void mele(Entity e){
+        e.health-=mele;
     }
 
     public abstract void tick();

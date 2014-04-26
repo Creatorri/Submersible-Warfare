@@ -21,6 +21,7 @@ public class Submarine extends Entity {
 
     @Override
     public void tick() {
+        health+=50;
         int dx = 0, dy = 0;
         if (LD29.ki.keys[87]) {
             dy++;
