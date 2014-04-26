@@ -10,6 +10,8 @@ import com.creatorri.level.Level;
  * @author Creatorri
  */
 public class Submarine extends Entity {
+    
+    private int score = 0;
 
     public Submarine(Level o) {
         super(o);

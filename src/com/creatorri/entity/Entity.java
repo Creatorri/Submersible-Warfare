@@ -4,6 +4,7 @@
 package com.creatorri.entity;
 
 import com.creatorri.level.Level;
+import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -16,8 +17,10 @@ public abstract class Entity {
     public final int ID;
     public double xVel, yVel;
     public double health;
+    public double angle;
     protected final Level level;
     protected final Random rand = new Random();
+    private ArrayList<Entity> instances = new ArrayList<>();
 
     public Entity(Level l) {
         level = l;
@@ -29,7 +32,16 @@ public abstract class Entity {
             x = rand.nextInt(level.WIDTH);
             y = rand.nextInt(level.HEIGHT);
         }
+        for(Entity e : instances){
+            if(e.getClass()==this.getClass()){
+                return;
+            }
+        }
+        instances.add(this);
     }
-
+    public void move(int dx,int dy){
+        if(level.level[dx+dy*level.WIDTH]!=0) return;
+        
+    }
     public abstract void tick();
 }
