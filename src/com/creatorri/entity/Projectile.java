@@ -52,14 +52,15 @@ public class Projectile extends Entity {
         if (yVel < 0) {
             moveTo(x, y - 1);
         }
-        mele = 50;
+        mele = 1000;
     }
 
     @Override
-    public void mele(Entity e) {
-        super.mele(e);
-        System.out.println("PROJECTILE ATTACKS " + e.getClass().getSimpleName());
-        death();
+    public boolean mele(Entity e) {
+        if(super.mele(e)){
+            death();
+        }
+        return true;
     }
 
     @Override
@@ -69,5 +70,10 @@ public class Projectile extends Entity {
             death();
         }
         move(xVel, yVel);
+        level.entities.stream().forEach((e) -> {
+            if (!(e instanceof Submarine || e instanceof Projectile)) {
+                mele(e);
+            }
+        });
     }
 }

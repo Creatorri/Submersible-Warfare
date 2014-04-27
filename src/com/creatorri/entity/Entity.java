@@ -41,7 +41,7 @@ public abstract class Entity {
     public void move(int dx, int dy) {
         for (int xx = x; xx < dx + x; xx += dx > 0 ? 1 : -1) {
             for (int yy = y; yy < dy + y; yy += dy > 0 ? 1 : -1) {
-                if (level.getDataAt(xx, yy) > 4) {
+                if (level.getDataAt(xx, yy) > 4 && level.getDataAt(xx, yy) - 4 != ID) {
                     mele(level.entities.get(level.getDataAt(xx, yy) - 4));
                 }
             }
@@ -87,17 +87,15 @@ public abstract class Entity {
         level.setDataAt(x, y, 0);
     }
 
-    public void mele(Entity e) {
-        if (distTo(e) > 1) {
-            return;
-        }
-        if (this.getClass() != e.getClass()) {
-            System.out.println(this.getClass().getSimpleName() + " Attacks " + e.getClass().getSimpleName() + " Starting with " + e.health + " Health");
+    public boolean mele(Entity e) {
+        if (distTo(e) > 1 || e.ID == ID) {
+            return false;
         }
         e.health -= mele;
-        if (this.getClass() != e.getClass()) {
-            System.out.println("And ending with " + e.health);
+        if (e.health <= 0) {
+            e.death();
         }
+        return true;
     }
 
     public abstract void tick();

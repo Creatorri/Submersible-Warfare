@@ -48,6 +48,9 @@ public class Level {
     }
 
     public int getDataAt(int x, int y) {
+        if(x==-1 || x==WIDTH+1){
+            return ROCK;
+        }
         if (y > HEIGHT - 3) {
             return AIR;
         }

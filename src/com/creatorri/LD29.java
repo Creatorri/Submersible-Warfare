@@ -4,9 +4,11 @@
 package com.creatorri;
 
 import com.creatorri.assets.LoadArt;
+import com.creatorri.entity.Projectile;
 import com.creatorri.input.KeyboardInput;
 import com.creatorri.input.MouseInput;
 import com.creatorri.level.Level;
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
@@ -113,8 +115,12 @@ public class LD29 extends JFrame implements Runnable {
                     }
                     if (level.entities.get(level.getDataAt(x - offx, y - offy) - 4).health <= 0) {
                         level.entities.get(level.getDataAt(x - offx, y - offy) - 4).death();
+                        continue;
                     }
-                    g.fillRect(x * SCALE, height - y * SCALE, (int) (SCALE * level.entities.get(level.getDataAt(x - offx, y - offy) - 4).health / level.entities.get(level.getDataAt(x - offx, y - offy) - 4).maxhealth), 10);
+                    if(!(level.entities.get(level.getDataAt(x - offx, y - offy) - 4) instanceof Projectile)){
+                        g.setColor(Color.red);
+                        g.fillRect(x * SCALE, height - y * SCALE, (int) (SCALE * level.entities.get(level.getDataAt(x - offx, y - offy) - 4).health / level.entities.get(level.getDataAt(x - offx, y - offy) - 4).maxhealth), 10);
+                    }
                     g.drawImage(level.entities.get(level.getDataAt(x - offx, y - offy) - 4).img, x * SCALE, height - y * SCALE, this);
                 }
             }

@@ -16,7 +16,6 @@ public class Submarine extends Entity {
 
     public Submarine(Level o) {
         super(o);
-        mele = 100;
     }
 
     @Override
