@@ -17,7 +17,7 @@ public abstract class Entity {
 
     public int x = 0, y = 0;
     public int ID;
-    public double health = 100;
+    public double health = 100, maxhealth = 100;
     public double mele = 10;
     public BufferedImage img;
     protected final LoadArt la = new LoadArt();
@@ -39,10 +39,10 @@ public abstract class Entity {
     }
 
     public void move(int dx, int dy) {
-        for(int xx=x;xx<dx+x; xx += dx>0 ? 1 : -1){
-            for(int yy=y;yy<dy+y; yy += dy>0 ? 1 : -1){
-                if(level.getDataAt(xx, yy)>4){
-                    mele(level.entities.get(level.getDataAt(xx, yy)-4));
+        for (int xx = x; xx < dx + x; xx += dx > 0 ? 1 : -1) {
+            for (int yy = y; yy < dy + y; yy += dy > 0 ? 1 : -1) {
+                if (level.getDataAt(xx, yy) > 4) {
+                    mele(level.entities.get(level.getDataAt(xx, yy) - 4));
                 }
             }
         }
@@ -86,9 +86,18 @@ public abstract class Entity {
         });
         level.setDataAt(x, y, 0);
     }
-    
-    public void mele(Entity e){
-        e.health-=mele;
+
+    public void mele(Entity e) {
+        if (distTo(e) > 1) {
+            return;
+        }
+        if (this.getClass() != e.getClass()) {
+            System.out.println(this.getClass().getSimpleName() + " Attacks " + e.getClass().getSimpleName() + " Starting with " + e.health + " Health");
+        }
+        e.health -= mele;
+        if (this.getClass() != e.getClass()) {
+            System.out.println("And ending with " + e.health);
+        }
     }
 
     public abstract void tick();

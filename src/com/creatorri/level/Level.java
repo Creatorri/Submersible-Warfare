@@ -42,7 +42,7 @@ public class Level {
         }
 
         entities.add(new Submarine(this));
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 50; i++) {
             entities.add(new Shark(this));
         }
     }

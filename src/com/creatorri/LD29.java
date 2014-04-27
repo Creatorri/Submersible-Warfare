@@ -37,6 +37,7 @@ public class LD29 extends JFrame implements Runnable {
     public static MouseInput mi;
     public static int fps;
     public static int width, height;
+    public static LD29 ld;
 
     public LD29() {
         super("Submersible Warfare");
@@ -61,7 +62,7 @@ public class LD29 extends JFrame implements Runnable {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        new LD29();
+        ld = new LD29();
     }
 
     public static void newLevel() {
@@ -110,6 +111,10 @@ public class LD29 extends JFrame implements Runnable {
                         level.setDataAt(x - offx, y - offy, 0);
                         continue;
                     }
+                    if (level.entities.get(level.getDataAt(x - offx, y - offy) - 4).health <= 0) {
+                        level.entities.get(level.getDataAt(x - offx, y - offy) - 4).death();
+                    }
+                    g.fillRect(x * SCALE, height - y * SCALE, (int) (SCALE * level.entities.get(level.getDataAt(x - offx, y - offy) - 4).health / level.entities.get(level.getDataAt(x - offx, y - offy) - 4).maxhealth), 10);
                     g.drawImage(level.entities.get(level.getDataAt(x - offx, y - offy) - 4).img, x * SCALE, height - y * SCALE, this);
                 }
             }

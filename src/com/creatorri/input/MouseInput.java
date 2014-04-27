@@ -1,10 +1,7 @@
 package com.creatorri.input;
 
 import com.creatorri.LD29;
-import static com.creatorri.LD29.SCALE;
-import static com.creatorri.LD29.height;
 import static com.creatorri.LD29.level;
-import static com.creatorri.LD29.width;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 

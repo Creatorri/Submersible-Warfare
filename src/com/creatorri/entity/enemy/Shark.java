@@ -19,6 +19,8 @@ public class Shark extends Entity {
         super(o);
         img = la.createBufferedImage("Shark.png", LD29.SCALE, LD29.SCALE);
         health = 10;
+        maxhealth = 10;
+        mele = 2;
     }
 
     @Override
@@ -31,7 +33,7 @@ public class Shark extends Entity {
                 move(rand.nextInt() % 2, rand.nextInt() % 2);
             }
         }
-        if(health<=0){
+        if (health <= 0) {
             death();
         }
     }
